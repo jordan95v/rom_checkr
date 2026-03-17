@@ -1,0 +1,37 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["core"]
+
+[project]
+name = "no-intro-rom-checkr"
+description = "A CLI tool to check ROMs against the No-Intro database."
+version = "2026.3.0"
+requires-python = ">=3.11"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICEN[CS]E.*"]
+keywords = ["rom", "check", "no-intro", "cli", "tool"]
+authors = [
+    { name = "jordan95v", email = "90615280+jordan95v@users.noreply.github.com" },
+]
+maintainers = [
+    { name = "jordan95v", email = "90615280+jordan95v@users.noreply.github.com" },
+]
+classifiers = [
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = []
+
+[dependency-groups]
+dev = ["pytest", "pytest-cov", "pytest-env", "pytest-mock", "python-dotenv"]
+
+[tool.pytest.ini_options]
+addopts = "-vv --tb=short --cov=core --cov-report=term-missing"
+
+[tool.coverage.run]
+omit = ["**/__init__.py", "**/tests/*"]
