@@ -1,0 +1,10 @@
+<datafile>
+	<game name="fake_game_md5">
+        <file id="2616" extension="gba" size="8388608" md5="e80e51d3be5ac3bc5d42392d7525b618" />
+        <file id="2616" extension="gba" size="8388608" md5="e80e51d3be5ac3bc5d42392d7525b618" />
+	</game>
+    <game name="fake_game_sha256">
+        <file id="2616" extension="gba" size="8388608" sha256="d6d12aa219501ba9914d8e4484c5790bcf57fdb3e1f6bb8315c04839211ef6fd" />
+        <file id="2616" extension="gba" size="8388608" sha256="d6d12aa219501ba9914d8e4484c5790bcf57fdb3e1f6bb8315c04839211ef6fd" />
+	</game>
+</datafile>

@@ -25,10 +25,17 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.14",
 ]
-dependencies = []
+dependencies = ["lxml>=6.0.2", "typer>=0.24.1"]
 
 [dependency-groups]
-dev = ["pytest", "pytest-cov", "pytest-env", "pytest-mock", "python-dotenv"]
+dev = [
+    "pytest>=9.0.2",
+    "pytest-cov>=7.0.0",
+    "pytest-env>=1.6.0",
+    "pytest-mock>=3.15.1",
+    "python-dotenv>=1.2.2",
+    "types-lxml>=2026.2.16",
+]
 
 [tool.pytest.ini_options]
 addopts = "-vv --tb=short --cov=core --cov-report=term-missing"
