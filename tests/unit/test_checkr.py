@@ -9,14 +9,14 @@ class TestNoIntroCheckr:
     @pytest.mark.parametrize(
         argnames="rom,expected",
         argvalues=[
-            (Path("tests/samples/fake_game_md5.gba"), True),
-            (Path("tests/samples/fake_game_sha256.gba"), True),
-            (Path("tests/samples/fake_game_not_found.gba"), False),
+            (Path("tests/samples/fake_game_md5.gba"), 1),
+            (Path("tests/samples/fake_game_sha256.gba"), 2),
+            (Path("tests/samples/fake_game_not_found.gba"), 0),
         ],
     )
-    def test_ckeck_rom(self, rom: Path, expected: bool) -> None:
+    def test_ckeck_rom(self, rom: Path, expected: int) -> None:
         checkr: NoIntroCheckr = NoIntroCheckr()
-        result: bool = checkr.check_rom(
+        result: int = checkr.check_rom(
             rom=Path(rom), xml=Path("tests/samples/fake_dump.xml")
         )
         assert result is expected

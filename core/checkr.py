@@ -7,7 +7,7 @@ __all__: list[str] = ["NoIntroCheckr"]
 
 
 class NoIntroCheckr:
-    def check_rom(self, rom: Path, xml: Path) -> bool:
+    def check_rom(self, rom: Path, xml: Path) -> int:
         """Checks the integrity of a ROM file against a No-Intro XML database.
 
         The method searches for the ROM's filename (stem) in the provided XML.
@@ -23,21 +23,16 @@ class NoIntroCheckr:
             lxml.etree.XMLSyntaxError: If the XML database is malformed.
 
         Returns:
-            bool: True if the ROM's hash matches an entry in the database, False otherwise.
+            int: The number of matching dumps found in the XML database for the ROM.
         """
 
         root: _ElementTree = parse(source=xml)
-        if hashes := root.xpath(_path=f'.//game[@name="{rom.stem}"]//file/@sha256'):
-            logger.debug(f"Checking {rom.name} using sha256 hashes")
+        if hashes := root.xpath(_path=f'.//game[@name="{rom.stem}"]//file/@sha256'):  # type: ignore
+            logger.debug(msg=f"Checking {rom.name} using sha256 hashes")
             sha256_hash: str = sha256(string=rom.read_bytes()).hexdigest()
-            total: int = hashes.count(sha256_hash)
-            logger.debug(f"Hash {sha256_hash} found {total} times in the database")
-        elif hashes := root.xpath(_path=f'.//game[@name="{rom.stem}"]//file/@md5'):
-            logger.debug(f"Checking {rom.name} using md5 hashes")
+            return hashes.count(sha256_hash)
+        elif hashes := root.xpath(_path=f'.//game[@name="{rom.stem}"]//file/@md5'):  # type: ignore
+            logger.debug(msg=f"Checking {rom.name} using md5 hashes")
             md5_hash: str = md5(string=rom.read_bytes()).hexdigest()
-            total: int = hashes.count(md5_hash)
-            logger.debug(f"Hash {md5_hash} found {total} times in the database")
-        else:
-            logger.error(f"No hashes found for {rom.name} in the database")
-            return False
-        return True
+            return hashes.count(md5_hash)
+        return 0
