@@ -25,7 +25,7 @@ class Pylog(Logger):
         super().__init__(name=name, level=level)
         handler: StreamHandler = StreamHandler(stream=sys.stdout)
         formatter: Formatter = AnsiFormatter(
-            fmt="[%(levelname)s][%(asctime)s] - %(message)s"
+            fmt="[%(levelname)s][%(asctime)s][%(filename)s] - %(message)s"
         )
         handler.setLevel(level=level)
         handler.setFormatter(fmt=formatter)
