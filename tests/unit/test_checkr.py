@@ -1,15 +1,13 @@
-from lxml.etree._element import _ElementTree
-from lxml.etree._element import _Element
 from pathlib import Path
 import pytest
-from lxml.etree import parse
+from lxml.etree import _ElementTree, parse
 from core.checkr import NoIntroCheckr
 
 __all__: list[str] = ["TestNoIntroCheckr"]
 
 
 class TestNoIntroCheckr:
-    XML: _ElementTree[_Element] = parse(source=Path("tests/samples/fake_dump.xml"))
+    XML: _ElementTree = parse(source=Path("tests/samples/fake_dump.xml"))
 
     @pytest.mark.parametrize(
         argnames="rom,expected",
