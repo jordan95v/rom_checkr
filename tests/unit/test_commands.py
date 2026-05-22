@@ -1,11 +1,10 @@
-from click.testing import Result
 from pathlib import Path
 from unittest.mock import MagicMock
+from click.testing import Result
 from pytest_mock import MockerFixture
 from typer.testing import CliRunner
 from core.__main__ import app
 from core.checkr import NoIntroCheckr
-
 
 __all__: list[str] = ["TestCommands"]
 
