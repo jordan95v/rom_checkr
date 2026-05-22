@@ -8,7 +8,7 @@ packages = ["core"]
 [project]
 name = "no-intro-rom-checkr"
 description = "A CLI tool to check ROMs against the No-Intro database."
-version = "2026.3.3"
+version = "2026.5.22"
 requires-python = ">=3.11"
 readme = "README.md"
 license = "MIT"

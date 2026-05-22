@@ -1,11 +1,16 @@
+from lxml.etree._element import _ElementTree
+from lxml.etree._element import _Element
 from pathlib import Path
 import pytest
+from lxml.etree import parse
 from core.checkr import NoIntroCheckr
 
 __all__: list[str] = ["TestNoIntroCheckr"]
 
 
 class TestNoIntroCheckr:
+    XML: _ElementTree[_Element] = parse(source=Path("tests/samples/fake_dump.xml"))
+
     @pytest.mark.parametrize(
         argnames="rom,expected",
         argvalues=[
@@ -14,9 +19,6 @@ class TestNoIntroCheckr:
             (Path("tests/samples/fake_game_not_found.gba"), 0),
         ],
     )
-    def test_ckeck_rom(self, rom: Path, expected: int) -> None:
-        checkr: NoIntroCheckr = NoIntroCheckr()
-        result: int = checkr.check_rom(
-            rom=Path(rom), xml=Path("tests/samples/fake_dump.xml")
-        )
-        assert result is expected
+    def test_check_rom(self, rom: Path, expected: int) -> None:
+        result: int = NoIntroCheckr.check_rom(rom=rom, tree=self.XML)
+        assert result == expected

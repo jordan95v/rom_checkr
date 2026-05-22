@@ -292,7 +292,7 @@ wheels = [
 
 [[package]]
 name = "no-intro-rom-checkr"
-version = "2026.3.0"
+version = "2026.3.3"
 source = { editable = "." }
 dependencies = [
     { name = "lxml" },

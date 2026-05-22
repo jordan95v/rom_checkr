@@ -1,9 +1,9 @@
-from core.config import logger
 from pathlib import Path
 from typing import Annotated
+from lxml.etree import _ElementTree, parse
 from typer import Option, Typer
 from core.checkr import NoIntroCheckr
-
+from core.config import logger
 
 app: Typer = Typer()
 
@@ -31,18 +31,22 @@ def check_folder(
         ),
     ],
 ):
-    checkr: NoIntroCheckr = NoIntroCheckr()
-    for rom in path.iterdir():
+    tree: _ElementTree = parse(source=xml)
+    for rom in sorted(path.iterdir()):
         if not rom.is_file():
             logger.warning(msg=f"{rom.name} is not a file, skipping.")
             continue
-        dump_amount: int = checkr.check_rom(rom=rom, xml=xml)
+        try:
+            dump_amount: int = NoIntroCheckr.check_rom(rom=rom, tree=tree)
+        except OSError:
+            logger.warning(msg=f"{rom.name} could not be read, skipping.")
+            continue
         if dump_amount >= 2:
             logger.info(msg=f"{rom.name} is trusted with {dump_amount} dumps.")
         elif dump_amount == 1:
             logger.warning(msg=f"{rom.name} is questionable with only 1 dump.")
         else:
-            logger.warning(msg=f"{rom.name} is invalid.")
+            logger.error(msg=f"{rom.name} is invalid.")
 
 
 if __name__ == "__main__":  # pragma: no cover

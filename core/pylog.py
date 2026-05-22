@@ -1,20 +1,32 @@
 import sys
-from logging import Formatter, Logger, StreamHandler, LogRecord
+from logging import (
+    CRITICAL,
+    DEBUG,
+    ERROR,
+    INFO,
+    WARNING,
+    Formatter,
+    Logger,
+    LogRecord,
+    StreamHandler,
+    makeLogRecord,
+)
 
 __all__: list[str] = ["Pylog"]
 
 
 class AnsiFormatter(Formatter):
-    LEVEL_COLOR: dict[int, str] = {
-        10: "\033[92m",  # DEBUG - Green
-        20: "\033[94m",  # INFO - Blue
-        30: "\033[93m",  # WARNING - Yellow
-        40: "\033[91m",  # ERROR - Red
-        50: "\033[95m",  # CRITICAL - Magenta
+    LEVEL_COLOR: dict[int, str] = {  # noqa: RUF012
+        DEBUG: "\033[92m",
+        INFO: "\033[94m",
+        WARNING: "\033[93m",
+        ERROR: "\033[91m",
+        CRITICAL: "\033[95m",
     }
     RESET_COLOR: str = "\033[0m"
 
     def format(self, record: LogRecord) -> str:
+        record = makeLogRecord(record.__dict__)
         level_color: str = self.LEVEL_COLOR.get(record.levelno, self.RESET_COLOR)
         record.levelname = f"{level_color}{record.levelname}{self.RESET_COLOR}"
         return super().format(record)

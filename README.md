@@ -1,98 +1,110 @@
-<h1>No-Intro ROM Checkr</h1>
+# No-Intro ROM Checkr
 
-`no-intro-rom-checkr` is a CLI utility that validates ROM files against a No-Intro XML DAT.
+![Python](https://img.shields.io/badge/python-3.11+-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-It scans a folder of ROMs and, for each file:
+`no-intro-rom-checkr` is a CLI utility that validates ROM files against a [No-Intro](https://no-intro.org/) XML DAT file.
 
-- Finds a `<game>` entry whose `name` matches the ROM filename without extension.
-- Prefers SHA256 validation when SHA256 hashes exist in the DAT.
-- Falls back to MD5 validation when SHA256 is not available.
-- Reports confidence based on matching dump count.
+## Features
 
-<h2>Table of Contents</h2>
+- Matches ROMs by filename stem against `<game name="...">` entries in the DAT.
+- Prefers **SHA256** validation when available; falls back to **MD5**.
+- Reports confidence level based on the number of matching dumps found.
+- Skips non-file entries (subdirectories, symlinks, etc.) with a warning.
+
+## Table of contents
 
 - [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
-- [How matching works](#how-matching-works)
-- [Running tests](#running-tests)
+- [How Matching Works](#how-matching-works)
+- [Running Tests](#running-tests)
 - [License](#license)
 
 ## Requirements
 
-- Python 3.13+
+- Python 3.11+
 
 ## Installation
 
 ```bash
 # Using uv
-you@machine:~$ uv sync --no-dev
+uv sync --no-dev
 
-# Using pip and venv
-you@machine:~$ python -m venv .venv
-you@machine:~$ source .venv/bin/activate  # Windows: .venv\Scripts\activate
-(venv) you@machine:~$ pip install .
+# Using pip + venv
+python -m venv .venv
+source .venv/bin/activate       # Windows: .venv\Scripts\activate
+pip install .
 ```
 
 For development (tests + tooling):
 
 ```bash
 # Using uv
-you@machine:~$ uv sync
+uv sync
 
-# Using pip and venv
-(venv) you@machine:~$ pip install -e .[dev]
+# Using pip + venv
+pip install -e .[dev]
 ```
 
 ## Usage
 
-Run the CLI by passing:
+```bash
+# Using uv
+uv run python -m core --path /path/to/roms --xml /path/to/no-intro.xml
 
-- `--path`: directory containing ROM files.
-- `--xml`: path to a No-Intro XML DAT file.
+# Using pip + venv
+python -m core --path /path/to/roms --xml /path/to/no-intro.xml
+```
+
+### Options
+
+| Option | Description |
+|--------|-------------|
+| `--path` | Directory containing ROM files |
+| `--xml`  | Path to the No-Intro XML DAT file |
+
+### Example output
+
+```
+INFO     Pokemon Red (USA).gb is trusted with 3 dumps.
+WARNING  Homebrew.gb is questionable with only 1 dump.
+WARNING  Unknown.gb is invalid.
+WARNING  saves/ is not a file, skipping.
+```
+
+### Confidence levels
+
+| Result | Condition |
+|--------|-----------|
+| `trusted with N dumps` | N ≥ 2 matching dumps |
+| `questionable with only 1 dump` | exactly 1 matching dump |
+| `invalid` | 0 matching dumps |
+
+## How matching works
+
+`NoIntroCheckr.check_rom` compares a ROM against the XML DAT in three steps:
+
+1. **Name lookup** — uses the ROM stem (filename without extension) to find `<game>` entries.
+   - `Pokemon Red (USA).gb` → looks for `<game name="Pokemon Red (USA)">`.
+2. **SHA256 check** — if any matching entry has SHA256 hashes, computes the ROM's SHA256 and counts exact matches.
+3. **MD5 fallback** — if no SHA256 hashes exist, computes MD5 and counts matches instead.
+4. Returns `0` if the game name is not found or no hashes match.
+
+The returned count drives the confidence message logged by the CLI.
+
+## Running tests
 
 ```bash
 # Using uv
-you@machine:~$ uv run python -m core --path /path/to/roms --xml /path/to/no-intro.xml
+uv run pytest
 
-# Using pip and venv
-(venv) you@machine:~$ python -m core --path /path/to/roms --xml /path/to/no-intro.xml
+# Using pip + venv
+pytest
 ```
 
-### Output Meaning
-
-For each file in the folder:
-
-- `trusted with N dumps` when `N >= 2`
-- `questionable with only 1 dump` when `N == 1`
-- `invalid` when `N == 0`
-
-Non-file entries in the folder (subdirectories, etc.) are skipped.
-
-## How Matching Works
-
-`NoIntroCheckr.check_rom` compares one ROM against the XML DAT:
-
-1. Uses the ROM stem (filename without extension) to find matching game entries:
-   - Example: `Pokemon.gba` matches `<game name="Pokemon">`.
-2. If matching entries provide SHA256 values, computes the ROM SHA256 and counts matches.
-3. Otherwise, if entries provide MD5 values, computes ROM MD5 and counts matches.
-4. If neither hash exists, returns `0`.
-
-The returned integer is the number of matching dumps in the XML and drives the CLI confidence message.
-
-## Running Tests
-
-```bash
-# Using uv
-you@machine:~$ uv run pytest
-
-# Using pip and venv
-(venv) you@machine:~$ pytest
-```
-
-The default pytest configuration includes coverage output for the `core` package.
+Coverage is reported automatically for the `core` package via the default pytest configuration.
 
 ## License
 
-This project is licensed under the MIT License. See [LICENSE](LICENSE).
+MIT — see [LICENSE](LICENSE).
